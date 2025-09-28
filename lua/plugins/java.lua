@@ -16,7 +16,7 @@ return {
       "mfussenegger/nvim-jdtls",  -- Java LSP
       "ibhagwan/fzf-lua",         -- optional fuzzy finder
     },
-    opts = {},  -- default options
+    opts = {},
   },
 
   -- LSP configuration for Java using jdtls
@@ -31,14 +31,22 @@ return {
 
       spring_boot.init_lsp_commands()
 
+      -- Cross-platform paths for jdtls and Lombok
+      local jdtls_path = vim.fn.stdpath("data") .. "/mason/bin/jdtls"
+      local lombok_jar = vim.fn.stdpath("data") .. "/mason/packages/jdtls/lombok.jar"
+      if vim.loop.os_uname().sysname == "Windows_NT" then
+        jdtls_path = vim.fn.stdpath("data") .. "\\mason\\bin\\jdtls.exe"
+        lombok_jar = vim.fn.stdpath("data") .. "\\mason\\packages\\jdtls\\lombok.jar"
+      end
+
       opts.servers = opts.servers or {}
       opts.servers.jdtls = {
         init_options = {
           bundles = spring_boot.java_extensions(),
         },
         cmd = {
-          vim.fn.expand('$HOME/.local/share/nvim/mason/bin/jdtls'),
-          '--jvm-arg=-javaagent:' .. vim.fn.expand('$HOME/.local/share/nvim/mason/packages/jdtls/lombok.jar')
+          jdtls_path,
+          "--jvm-arg=-javaagent:" .. lombok_jar,
         },
       }
     end,
