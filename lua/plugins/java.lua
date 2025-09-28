@@ -29,13 +29,16 @@ return {
         return
       end
 
-      -- Initialize Spring Boot commands
       spring_boot.init_lsp_commands()
 
       opts.servers = opts.servers or {}
       opts.servers.jdtls = {
         init_options = {
           bundles = spring_boot.java_extensions(),
+        },
+        cmd = {
+          vim.fn.expand('$HOME/.local/share/nvim/mason/bin/jdtls'),
+          '--jvm-arg=-javaagent:' .. vim.fn.expand('$HOME/.local/share/nvim/mason/packages/jdtls/lombok.jar')
         },
       }
     end,
